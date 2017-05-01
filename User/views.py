@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from .forms import StudentRegistrationForm
+from .forms import StudentRegistrationForm, EditStudent
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -28,7 +28,7 @@ def user_login(request):
                 'success': False
             })
     else:
-        return render(request,'User/user-login.html')
+        return render(request, 'User/user-login.html')
 
 
 @csrf_exempt
@@ -112,3 +112,36 @@ def delete_student(request):
         username = request.POST.get('username')
         User.objects.filter(username=username).delete()
         return HttpResponse("Deletion Successful")
+
+
+@csrf_exempt
+def edit_student(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        department = Department.objects.get(department_initial=request.POST.get("department"))
+        roll = request.POST.get('roll')
+        email = request.POST.get('email')
+        user_type = request.POST.get('user_type')
+        user = User.objects.get(username=username)
+        if user_type == 'student':
+            user.first_name = first_name
+            user.last_name = last_name
+            user.email = email
+            user.save()
+            user.student.department = department
+            user.student.roll = roll
+            user.student.save()
+            return HttpResponse("Successfully Updated")
+        else:
+            user.first_name = first_name
+            user.last_name = last_name
+            user.email = email
+            user.save()
+            user.teacher.department = department
+            user.teacher.save()
+            return HttpResponse("Successfully Updated")
+    else:
+        form = EditStudent()
+        return render(request, 'User/edit-teacher.html', {'form': form})
