@@ -17,10 +17,10 @@ def user_login(request):
         user = authenticate(username=username, password=password)
         try:
             student = user.student.roll
-            permisson = False
+            permission = False
         except ObjectDoesNotExist:
-            permisson = True
-        if user is not None and permisson:
+            permission = True
+        if user is not None and permission:
             return JsonResponse({
                 'success': True,
                 'user': {
