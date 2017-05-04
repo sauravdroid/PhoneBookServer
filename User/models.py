@@ -17,6 +17,7 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     roll = models.CharField(max_length=255)
+    phone_no = models.CharField(max_length=15,default="N/A")
 
     def __str__(self):
         return self.user.get_full_name()
@@ -25,6 +26,7 @@ class Student(models.Model):
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    phone_no = models.CharField(max_length=15,default="N/A")
 
     def __str__(self):
         return self.user.get_full_name()

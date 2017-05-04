@@ -5,7 +5,7 @@ from .models import *
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth import authenticate
-
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 
@@ -15,12 +15,18 @@ def user_login(request):
         username = request.POST.get("username")
         password = request.POST.get("password")
         user = authenticate(username=username, password=password)
-        if user is not None:
+        try:
+            student = user.student.roll
+            permisson = False
+        except ObjectDoesNotExist:
+            permisson = True
+        if user is not None and permisson:
             return JsonResponse({
                 'success': True,
                 'user': {
                     'username': user.username,
-                    'email': user.email
+                    'email': user.email,
+                    'admin': user.is_superuser
                 }
             })
         else:
@@ -40,13 +46,14 @@ def add_student(request):
         form = StudentRegistrationForm(request.POST)
         dept = request.POST.get('department')
         roll = request.POST.get('roll')
+        phone_no = request.POST.get('phone_no')
         department = Department.objects.get(department_initial=dept)
         if form.is_valid():
             user = form.save(commit=False)
             password = form.cleaned_data['password']
             user.set_password(password)
             user.save()
-            student = Student(user=user, department=department, roll=roll)
+            student = Student(user=user, department=department, roll=roll,phone_no=phone_no)
             student.save()
             return HttpResponse("Successfully Registered")
         else:
@@ -61,13 +68,14 @@ def add_teacher(request):
     elif request.method == 'POST':
         form = StudentRegistrationForm(request.POST)
         dept = request.POST.get('department')
+        phone_no = request.POST.get('phone_no')
         department = Department.objects.get(department_initial=dept)
         if form.is_valid():
             user = form.save(commit=False)
             password = form.cleaned_data['password']
             user.set_password(password)
             user.save()
-            teacher = Teacher(user=user, department=department)
+            teacher = Teacher(user=user, department=department,phone_no=phone_no)
             teacher.save()
             return HttpResponse("Successfully Registered")
         else:
@@ -76,7 +84,7 @@ def add_teacher(request):
 
 @csrf_exempt
 def all_teacher(request):
-    teachers = Teacher.objects.all()
+    teachers = Teacher.objects.all().order_by('-pk')
     response = []
     for item in teachers:
         response.append({
@@ -92,7 +100,7 @@ def all_teacher(request):
 
 @csrf_exempt
 def all_students(request):
-    students = Student.objects.all()
+    students = Student.objects.all().order_by('-pk')
     response = []
     for item in students:
         response.append({
