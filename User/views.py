@@ -156,3 +156,8 @@ def edit_student(request):
 @csrf_exempt
 def edit_student_new(request):
     return HttpResponse("Hello Edited Student")
+
+
+@csrf_exempt
+def edit_again(request):
+    return HttpResponse("Edit Again")
