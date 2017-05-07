@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^delete/student$', views.delete_student, name='delete_student'),
     url(r'^login$', views.user_login, name='user_login'),
     url(r'^edit$', views.edit_student, name='edit_student'),
+    url(r'^edit_new$', views.edit_student_new, name='edit_student'),
 ]

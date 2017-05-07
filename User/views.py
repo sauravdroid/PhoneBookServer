@@ -153,3 +153,6 @@ def edit_student(request):
     else:
         form = EditStudent()
         return render(request, 'User/edit-teacher.html', {'form': form})
+@csrf_exempt
+def edit_student_new(request):
+    return HttpResponse("Hello Edited Student")
