@@ -92,7 +92,8 @@ def all_teacher(request):
             'last_name': item.user.last_name,
             'email': item.user.email,
             'username': item.user.username,
-            'department': item.department.department_initial
+            'department': item.department.department_initial,
+            'phone_no':item.phone_no
         })
     print(response)
     return JsonResponse(response, safe=False)
@@ -109,7 +110,8 @@ def all_students(request):
             'email': item.user.email,
             'username': item.user.username,
             'department': item.department.department_initial,
-            'roll': item.roll
+            'roll': item.roll,
+            'phone_no':item.phone_no
         })
     return JsonResponse(response, safe=False)
 
@@ -131,6 +133,7 @@ def edit_student(request):
         department = Department.objects.get(department_initial=request.POST.get("department"))
         roll = request.POST.get('roll')
         email = request.POST.get('email')
+        phone_no = request.POST.get('phone_no')
         user_type = request.POST.get('user_type')
         user = User.objects.get(username=username)
         if user_type == 'student':
@@ -140,6 +143,7 @@ def edit_student(request):
             user.save()
             user.student.department = department
             user.student.roll = roll
+            user.student.phone_no = phone_no
             user.student.save()
             return HttpResponse("Successfully Updated")
         else:
@@ -148,6 +152,7 @@ def edit_student(request):
             user.email = email
             user.save()
             user.teacher.department = department
+            user.teacher.phone_no = phone_no
             user.teacher.save()
             return HttpResponse("Successfully Updated")
     else:
